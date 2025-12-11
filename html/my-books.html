@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Books - Library Catalogue</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div id="navbar"></div>
+    <div class="container">
+        <h1>My Books</h1>
+        <div id="message" style="display: none;"></div>
+        
+        <h2>Currently Borrowed</h2>
+        <div id="loading" class="loading">Loading your books...</div>
+        <div id="activeBorrows"></div>
+
+        <h2 style="margin-top: 40px;">Returned Books</h2>
+        <div id="returnedBorrows"></div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/navbar.js"></script>
+    <script>
+        // Check authentication
+        if (!checkAuth()) window.location.href = 'login.html';
+
+        let books = [];
+        
+        async function fetchMyBooks() {
+            try {
+                document.getElementById('loading').style.display = 'block';
+                const response = await api.get('/borrow/my-books');
+                books = response.data.borrows;
+                
+                const activeBorrows = books.filter(b => b.borrow_status === 'active');
+                const returnedBorrows = books.filter(b => b.borrow_status === 'returned');
+                
+                renderActiveBorrows(activeBorrows);
+                renderReturnedBorrows(returnedBorrows);
+                
+            } catch (error) {
+                console.error('Error fetching my books:', error);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            return new Date(dateString).toLocaleDateString();
+        }
+
+        function isOverdue(dueDate) {
+            if (!dueDate) return false;
+            return new Date(dueDate) < new Date();
+        }
+
+        function renderActiveBorrows(borrows) {
+            const container = document.getElementById('activeBorrows');
+            if (borrows.length === 0) {
+                container.innerHTML = '<div class="empty-state"><p>You don\'t have any active borrows</p></div>';
+                return;
+            }
+
+            container.innerHTML = '<div class="book-grid">' + borrows.map(borrow => `
+                <div class="book-card">
+                    <h3>${borrow.title}</h3>
+                    <p><strong>Author:</strong> ${borrow.author}</p>
+                    <p><strong>ISBN:</strong> ${borrow.isbn}</p>
+                    <p><strong>Borrowed:</strong> ${formatDate(borrow.borrow_date)}</p>
+                    <p><strong>Due Date:</strong> ${formatDate(borrow.due_date)}</p>
+                    ${isOverdue(borrow.due_date) ? '<p style="color: #f44336; font-weight: bold;">OVERDUE</p>' : ''}
+                    <div class="actions">
+                        <button class="btn btn-secondary" onclick="handleReturn(${borrow.book_id})">Return Book</button>
+                    </div>
+                </div>
+            `).join('') + '</div>';
+        }
+
+        function renderReturnedBorrows(borrows) {
+            const container = document.getElementById('returnedBorrows');
+            if (borrows.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+
+            container.innerHTML = '<div class="book-grid">' + borrows.map(borrow => `
+                <div class="book-card">
+                    <h3>${borrow.title}</h3>
+                    <p><strong>Author:</strong> ${borrow.author}</p>
+                    <p><strong>ISBN:</strong> ${borrow.isbn}</p>
+                    <p><strong>Borrowed:</strong> ${formatDate(borrow.borrow_date)}</p>
+                    <p><strong>Returned:</strong> ${formatDate(borrow.return_date)}</p>
+                    <span class="status-badge status-returned">Returned</span>
+                </div>
+            `).join('') + '</div>';
+        }
+
+        async function handleReturn(bookId) {
+            console.log(bookId)
+
+            if(!bookId) {
+                alert('Book ID is required');
+                return;
+            }
+
+            try {
+                await api.post(`/borrow/${bookId}/return`);
+                showMessage('Book returned successfully!', 'success');
+                fetchMyBooks();
+            } catch (error) {
+                showMessage(error.response?.data?.error || 'Failed to return book', 'error');
+            }
+        }
+
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = text;
+            messageDiv.className = type === 'success' ? 'success-message' : 'error-message';
+            messageDiv.style.display = 'block';
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 3000);
+        }
+
+        // Initial load
+        fetchMyBooks();
+    </script>
+</body>
+</html>
+
+
+
+
+
+

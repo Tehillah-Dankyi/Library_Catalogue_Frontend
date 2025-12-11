@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Catalogue - Library Catalogue</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div id="navbar"></div>
+    <div class="container">
+        <h1>Book Catalogue</h1>
+        <div id="message" style="display: none;"></div>
+        <div class="search-filter-container">
+            <input type="text" id="search" placeholder="Search by title, author, or ISBN...">
+            <input type="text" id="authorFilter" placeholder="Filter by author...">
+            <select id="categoryFilter">
+                <option value="">All Categories</option>
+            </select>
+        </div>
+        <div id="loading" class="loading">Loading books...</div>
+        <div id="booksContainer"></div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/navbar.js"></script>
+    <script>
+        // Check authentication
+        if (!checkAuth())  window.location.href = 'login.html';
+
+        let books = [];
+        let categories = [];
+
+        async function fetchBooks() {
+            const search = document.getElementById('search').value;
+            const author = document.getElementById('authorFilter').value;
+            const category = document.getElementById('categoryFilter').value;
+            
+            const params = {};
+            if (search) params.search = search;
+            if (author) params.author = author;
+            if (category) params.category = category;
+
+            try {
+                document.getElementById('loading').style.display = 'block';
+                const response = await api.get('/books', { params });
+                books = response.data.books;
+                renderBooks();
+            } catch (error) {
+                console.error('Error fetching books:', error);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        async function fetchCategories() {
+            try {
+                const response = await api.get('/books/categories/list');
+                categories = response.data.categories;
+                const select = document.getElementById('categoryFilter');
+                categories.forEach(cat => {
+                    const option = document.createElement('option');
+                    option.value = cat;
+                    option.textContent = cat;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error fetching categories:', error);
+            }
+        }
+
+        function renderBooks() {
+            const container = document.getElementById('booksContainer');
+            if (books.length === 0) {
+                container.innerHTML = '<div class="empty-state"><h3>No books found</h3><p>Try adjusting your search or filters</p></div>';
+                return;
+            }
+
+            container.innerHTML = '<div class="book-grid">' + books.map(book => `
+                <div class="book-card">
+                    <h3>${book.title}</h3>
+                    <p><strong>Author:</strong> ${book.author}</p>
+                    <p><strong>ISBN:</strong> ${book.isbn}</p>
+                    ${book.category ? `<p><strong>Category:</strong> ${book.category}</p>` : ''}
+                    <span class="status-badge status-${book.availability_status}">${book.availability_status}</span>
+                    <div class="actions">
+                        ${book.availability_status === 'available' ? `<button class="btn" onclick="handleBorrow(${book.id})">Borrow</button>` : ''}
+                    </div>
+                </div>
+            `).join('') + '</div>';
+        }
+
+        async function handleBorrow(bookId) {
+            try {
+                await api.post(`/borrow/${bookId}`);
+                showMessage('Book borrowed successfully!', 'success');
+                fetchBooks();
+            } catch (error) {
+                showMessage(error.response?.data?.error || 'Failed to borrow book', 'error');
+            }
+        }
+
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = text;
+            messageDiv.className = type === 'success' ? 'success-message' : 'error-message';
+            messageDiv.style.display = 'block';
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 3000);
+        }
+
+        // Event listeners
+        document.getElementById('search').addEventListener('input', fetchBooks);
+        document.getElementById('authorFilter').addEventListener('input', fetchBooks);
+        document.getElementById('categoryFilter').addEventListener('change', fetchBooks);
+
+        // Initial load
+        fetchBooks();
+        fetchCategories();
+    </script>
+</body>
+</html>
+
+
+
+
+
+
