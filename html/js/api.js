@@ -1,5 +1,5 @@
 // API Configuration
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'https://library-catalogue-backend.onrender.com/api';
 
 // Create axios-like API helper
 const api = {
