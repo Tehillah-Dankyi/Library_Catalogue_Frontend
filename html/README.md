@@ -20,26 +20,6 @@ html/
     └── navbar.js       # Navbar component
 ```
 
-## How to Use
-
-1. **Open any HTML file directly in your browser**
-   - Double-click `login.html` or any other file
-   - Or use a local server (recommended)
-
-2. **Using a local server (recommended):**
-   ```bash
-   # Python 3
-   python -m http.server 8000
-   
-   # Or Node.js http-server
-   npx http-server -p 8000
-   ```
-   Then visit: `http://localhost:8000/login.html`
-
-3. **Update API URL:**
-   - Edit `js/api.js` and change `API_URL` to your backend URL
-   - Default: `http://localhost:5000/api`
-
 ## Pages
 
 - **login.html** - User login
@@ -50,12 +30,12 @@ html/
 
 ## Features
 
-- ✅ Separate HTML files for each page
-- ✅ Shared JavaScript utilities
-- ✅ Shared CSS styles
-- ✅ Authentication protection
-- ✅ Role-based access (admin/student)
-- ✅ All functionality from React version
+-  ✅Separate HTML files for each page
+-  ✅Shared JavaScript utilities
+-  ✅Shared CSS styles
+-  ✅Authentication protection
+-  ✅Role-based access (admin/student)
+-  ✅All functionality from React version
 
 ## Default Credentials
 
@@ -65,13 +45,6 @@ html/
 
 **Student:**
 - Register a new account through register.html
-
-## Notes
-
-- Make sure backend is running on `http://localhost:5000`
-- Update `API_URL` in `js/api.js` if backend is on different port/URL
-- All pages check authentication and redirect if needed
-- Uses localStorage for token and user data
 
 
 
