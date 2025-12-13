@@ -1,5 +1,8 @@
-# Digital Library Catalogue System - Frontend
+# Digital Library Catalogue System
 
+
+### Tehillah Dankyi 
+### 10022300068
 ## Project Name
 Digital Library Catalogue System - Frontend
 
@@ -12,12 +15,13 @@ This is the frontend application for a Digital Library Catalogue System that pro
 
 
 ## Deployment Link
-**GitHub Pages Deployment**: [Your GitHub Pages URL]
-- Example: `https://yourusername.github.io/library-catalogue-frontend`
+**GitHub Pages Deployment**: 
+-   https://github.com/Tehillah-Dankyi/Library_Catalogue_Frontend
 
-**Backend API**: [Your Render Backend URL]
-- Example: `https://library-catalogue-backend.onrender.com`
+- https://github.com/Tehillah-Dankyi/Library_Catalogue_Backend
 
+**Backend API**: 
+-  https://library-catalogue-backend.onrender.com
 ## Login Details
 ### Admin Account
 - **Email**: `admin@library.com`
@@ -26,7 +30,7 @@ This is the frontend application for a Digital Library Catalogue System that pro
 ### Student Account (Create your own)
 - Register a new account through the registration page
 - Example credentials:
-  - **Email**: `testuser@example.com`
+  - **Email**: `kimkpearnold@gmail.com`
   - **Password**: `password123`
 
 ## Feature Checklist

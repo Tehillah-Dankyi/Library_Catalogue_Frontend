@@ -1,9 +1,10 @@
-# HTML Version - Library Catalogue System
+# Library Catalogue System
 
 This is the HTML version of the Library Catalogue System with separate HTML files for each page.
 
 
-## Tehillah Dankyi    10022300068
+### Tehillah Dankyi    
+### 10022300068
 
 ## File Structure
 
@@ -54,11 +55,6 @@ html/
 
 -Link to view live frontend
 - https://library-catalogue-frontend.vercel.app/
-
-##
--Link to view Github page for frontend repository
-- https://github.com/Tehillah-Dankyi/Library_Catalogue_Frontend
-
 
 
 
